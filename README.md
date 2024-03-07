@@ -124,64 +124,6 @@ docker-compose file:
 ```
 main.go:
 ```go
-/*
-package main
-
-import (
-
-	"connection_test/core"
-	"context"
-	"database/sql"
-	"fmt"
-	"log"
-
-)
-
-	type Product struct {
-		ProductID   int     `db:"product_id" json:"product_id"`
-		Naming      string  `db:"naming" json:"naming"`
-		Weight      float64 `json:"weight"`
-		Description string  `json:"description"`
-	}
-
-func main() {
-
-	var test_connection core.ConnectionHandler
-
-	core.Initiallizing(&test_connection)
-
-	ctx := context.Background()
-
-	err := test_connection.Redis.Set(ctx, "newkey2", "45", 0).Err()
-	if err != nil {
-
-		log.Fatal("qq1")
-	}
-	val, err := test_connection.Redis.Get(ctx, "newkey2").Result()
-	if err != nil {
-		log.Fatal("qq")
-	}
-
-	var p Product
-	err = test_connection.SQLDB.Get(&p, "SELECT product_id, naming, weight, description FROM products WHERE product_id = $1", 1)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			log.Println("Нет данных для указанного id")
-		} else {
-			log.Fatalln("Ошибка при выполнении запроса:", err)
-		}
-	}
-
-	if err != nil {
-		fmt.Println("+")
-		log.Fatal(err)
-	}
-	fmt.Println(p)
-	fmt.Println(val)
-	//core.StartHealthCheckServer("1251")
-
-}
-*/
 package main
 
 import (
