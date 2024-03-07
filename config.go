@@ -10,7 +10,7 @@ import (
 )
 
 // use a config file to write data
-
+// ADD MORE CONN AND DISCON
 func LoadConf(path string) {
 	file, err := os.Open(path)
 	if err != nil {
@@ -35,8 +35,8 @@ func LoadConf(path string) {
 
 		config[key] = defenition
 	}
-	for key, def := range config {
+	/*for key, def := range config {
 		os.Setenv(key, def)
-	}
+	}*/
 
 }
