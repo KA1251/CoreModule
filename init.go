@@ -60,8 +60,9 @@ func Initiallizing(con *ConnectionHandler) {
 
 	}
 	//reddis connection checker
-
-	if os.Getenv("REDIS_ENABLED") == "T" {
+	redis_str := os.Getenv("REDIS_ENABLED")
+	if redis_str == "T" {
+		logrus.Info("+")
 		go ConToRedis(os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"), os.Getenv("REDIS_PASSWORD"), doneRedis, updatesRedis)
 
 	}
