@@ -9,8 +9,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// use a config file to write data
-// ADD MORE CONN AND DISCON
 func LoadConf(path string) {
 	file, err := os.Open(path)
 	if err != nil {
