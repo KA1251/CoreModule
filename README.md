@@ -13,7 +13,7 @@ conn.CloseAllConnections() // инициализация отключения
 ```
 ## Example of usage 1(redis)
 Dockerfile:
-```Dockerfile:
+```Dockerfile
 
 FROM golang:latest
 
