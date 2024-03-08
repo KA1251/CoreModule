@@ -32,7 +32,7 @@ RUN go build -o main .
 
 CMD ["./main"]
 ```
-docker-compose file:
+docker-compose:
 ```.yml
   version: '3'
   services:
@@ -119,7 +119,7 @@ RUN go build -o main .
 CMD ["./main"]
 ```
 docker-compose:
-```.yml
+``` .yml
 version: '3'
 
 services:
