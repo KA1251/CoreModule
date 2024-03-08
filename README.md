@@ -33,7 +33,7 @@ RUN go build -o main .
 CMD ["./main"]
 ```
 docker-compose:
-```.yml
+``` .yml
   version: '3'
   services:
     redis:
