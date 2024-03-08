@@ -16,7 +16,7 @@ func ConToMySQL(drivername, username, password, dbname, host, port string, done 
 	for {
 		db, err := sql.Open(drivername, dsn)
 		if err == nil {
-			logrus.Info("Redis sucsessfull conection")
+			logrus.Info("MySql sucsessfull conection")
 			data <- db
 			done <- struct{}{}
 			return
