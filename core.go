@@ -49,6 +49,10 @@ type ConnectionHandler struct {
 	//MySQL
 	MySQLIsInitialized bool
 	MySQLDB            *sql.DB
+
+	//Cockroach
+	CockroachIsInitialized bool
+	Cockroach              *sql.DB
 }
 
 var Handler ConnectionHandler
@@ -90,7 +94,12 @@ func (h *ConnectionHandler) CloseAllConnections() {
 			log.Printf("Error when closing connection with RabbitMQ: %s\n", err)
 		}
 	}
-
+	if h.Cockroach != nil {
+		h.CockroachIsInitialized = false
+		if err := h.Cockroach.Close(); err != nil {
+			log.Printf("Error when closing connection with Cockroach: %s", err)
+		}
+	}
 	if h.KafkaProducer != nil {
 		if err := h.KafkaProducer.Close(); err != nil {
 			log.Printf("Error when closing Kafka Producer: %s\n", err)
@@ -104,4 +113,5 @@ func (h *ConnectionHandler) CloseAllConnections() {
 	}
 
 	h.KafkaIsInitialized = false
+
 }
