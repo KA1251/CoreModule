@@ -35,6 +35,9 @@ func Initiallizing(con *ConnectionHandler) {
 	doneMySQL := make(chan struct{}, 1)
 	updatesMySQL := make(chan *sql.DB, 1)
 
+	doneCockroach := make(chan struct{}, 1)
+	updateCockroach := make(chan *sql.DB, 1)
+
 	//sql connection checker
 
 	if os.Getenv("SQL_ENABLED") == "T" {
@@ -62,7 +65,7 @@ func Initiallizing(con *ConnectionHandler) {
 	//reddis connection checker
 	redis_str := os.Getenv("REDIS_ENABLED")
 	if redis_str == "T" {
-		logrus.Info("+")
+
 		go ConToRedis(os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"), os.Getenv("REDIS_PASSWORD"), doneRedis, updatesRedis)
 
 	}
@@ -73,6 +76,15 @@ func Initiallizing(con *ConnectionHandler) {
 
 	}
 
+	if os.Getenv("COCKROACH_ENABLED") == "T" {
+		go ConToCockRoach(os.Getenv("COCKROACH_DRIVER"), os.Getenv("COCKROACH_USERNAME"), os.Getenv("COCKROACH_PASSWORD"), os.Getenv("COCKROACH_DB"), os.Getenv("COCKROACH_HOST"), os.Getenv("COCKROACH_PORT"), os.Getenv("COCHROACH_APP"), doneCockroach, updateCockroach)
+	}
+	if os.Getenv("COCKROACH_ENABLED") == "T" {
+		<-doneCockroach
+		db := <-updateCockroach
+		con.Cockroach = db
+		con.CockroachIsInitialized = true
+	}
 	if os.Getenv("SQL_ENABLED") == "T" {
 		<-doneSQL
 		db := <-updatesSQL
