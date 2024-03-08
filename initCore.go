@@ -4,6 +4,6 @@ package core
 
 func init() {
 
-	LoadConf("conf.txt")
+	/*LoadConf("conf.txt")*/
 
 }
