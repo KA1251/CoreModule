@@ -46,7 +46,6 @@ docker-compose:
         dockerfile: Dockerfile
       depends_on:
         - redis
-
 ```
 main.go:
 ```go
