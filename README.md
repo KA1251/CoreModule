@@ -11,6 +11,48 @@ conn.CloseAllConnections() // инициализация отключения
 в случае неудачного подключения происходит реконнект и формируютя логи
  о неудачном подключении (в случае если подключение было успешным также формируются логи о подключении)
 ```
+## Config list
+эти переменные окружения используются для задания параметров подключения:
+```text
+REDIS_ENABLED:
+REDIS_HOST:
+REDIS_PORT:
+REDIS_PASSWORD: 
+RABBITMQ_ENABLED:
+RABBITMQ_HOST: 
+RABBITMQ_PORT:
+RABBITMQ_USERNAME: 
+RABBITMQ_PASSWORD:
+PROMETHEUS_ENABLED:
+PROMETHEUS_HOST:
+PROMETHEUS_PORT: 
+KAFKA_ENABLED:
+KAFKA_PORT:
+KAFKA_HOST:
+KAFKA_USERNAME:
+KAFKA_PASSWORD:
+SQL_ENABLED:
+SQL_PORT:
+SQL_USERNAME:
+SQL_PASSWORD:
+SQL_HOST:
+SQL_DB:
+SQL_DRIVER:
+MYSQL_ENABLED:
+MYSQL_PORT:
+MYSQL_HOST:
+MYSQL_USERNAME:
+MYSQL_PASSWORD:
+MYSQL_DB:
+MYSQL_DRIVER:
+COCKROACH_ENABLED: 
+COCKROACH_HOST: 
+COCKROACH_USERNAME:
+COCKROACH_PORT: 
+COCKROACH_DB: 
+COCKROACH_DRIVER: 
+COCKROACH_APP: 
+```
 ## Example of usage 1(redis)
 Dockerfile:
 ```Dockerfile
