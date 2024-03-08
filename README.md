@@ -101,3 +101,19 @@ redis-1  | 19:C 07 Mar 2024 12:48:42.144 * DB saved on disk
 redis-1  | 19:C 07 Mar 2024 12:48:42.144 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
 redis-1  | 1:M 07 Mar 2024 12:48:42.224 * Background saving terminated with success
 ```
+## example of usage 2 (cockroachdb)
+``` DockerFile
+FROM golang:latest
+
+WORKDIR /app
+
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
+COPY . .
+
+RUN go build -o main .
+
+CMD ["./main"]
+```
