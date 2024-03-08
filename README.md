@@ -13,7 +13,7 @@ conn.CloseAllConnections() // инициализация отключения
 ```
 ## Example of usage 1(redis)
 Dockerfile:
-```text
+```Dockerfile:
 
 FROM golang:latest
 
@@ -102,6 +102,7 @@ redis-1  | 19:C 07 Mar 2024 12:48:42.144 * Fork CoW for RDB: current 0 MB, peak 
 redis-1  | 1:M 07 Mar 2024 12:48:42.224 * Background saving terminated with success
 ```
 ## example of usage 2 (cockroachdb)
+DockerFile:
 ``` DockerFile
 FROM golang:latest
 
@@ -116,4 +117,101 @@ COPY . .
 RUN go build -o main .
 
 CMD ["./main"]
+```
+docker-compose:
+```.yml
+version: '3'
+
+services:
+  cockroachdb:
+    restart: always
+    image: cockroachdb/cockroach:v21.1.10
+    environment:
+      COCKROACH_DB: defaultdb
+      COCKROACH_USER: root 
+    ports:
+      - "26257:26257"
+    volumes: 
+      - cockroach-data:/cockroach/cockroach-data
+    command: start-single-node --insecure
+
+  go-app:
+    build: ./
+    command: ./main
+    environment:
+      COCKROACH_ENABLED: T
+      COCKROACH_HOST: cockroachdb
+      COCKROACH_USERNAME: root
+      COCKROACH_PORT: 26257
+      COCKROACH_DB: defaultdb
+      COCKROACH_DRIVER: postgres
+    depends_on:
+      - cockroachdb
+
+volumes:
+  cockroach-data:
+```
+Код: создает бд, кидает данные, получает данные
+```go
+package main
+
+import (
+	"connection_test/core"
+	"fmt"
+	"log"
+	"os"
+
+	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
+)
+
+func main() {
+	var conn core.ConnectionHandler
+	core.Initiallizing(&conn)
+	if _, err := conn.Cockroach.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", os.Getenv("COCKROACH_DB"))); err != nil {
+		log.Fatal("Error creating database:", err)
+	}
+	fmt.Println("created")
+	var exists bool
+	err := conn.Cockroach.QueryRow(`SELECT EXISTS(SELECT 1 FROM information_schema.schemata WHERE catalog_name = $1)`, os.Getenv("COCKROACH_DB")).Scan(&exists)
+	if err != nil {
+		log.Fatal("Error checking database existence:", err)
+	}
+	if !exists {
+		log.Fatalf("Database %s does not exist11", conn.Cockroach)
+	}
+
+	if _, err := conn.Cockroach.Exec(`CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name STRING)`); err != nil {
+		log.Fatal("Error creating table:", err)
+	}
+
+	if _, err := conn.Cockroach.Exec(`INSERT INTO users (name) VALUES ($1)`, "John Doe"); err != nil {
+		log.Fatal("Error inserting data:", err)
+	}
+
+	rows, err := conn.Cockroach.Query(`SELECT id, name FROM users`)
+	if err != nil {
+		log.Fatal("Error querying data:", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var id int
+		var name string
+		if err := rows.Scan(&id, &name); err != nil {
+			log.Fatal("Error scanning row:", err)
+		}
+		fmt.Printf("ID: %d, Name: %s\n", id, name)
+	}
+	if err := rows.Err(); err != nil {
+		log.Fatal("Error iterating rows:", err)
+	}
+}
+
+```
+output:
+```text
+go-app-1       | time="2024-03-08T13:35:20Z" level=info msg="COCKROACH sucsessfull conection"
+go-app-1       | created
+go-app-1       | ID: 949729758244175873, Name: John Doe
 ```
