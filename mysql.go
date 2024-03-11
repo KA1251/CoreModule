@@ -10,7 +10,7 @@ import (
 )
 
 // mariaDB
-func ConToMySQL(drivername, username, password, dbname, host, port string, done chan<- struct{}, data chan<- *sql.DB) {
+func ConToMySQL(drivername, username, password, dbname, host, port string, done chan<- struct{}, data chan<- *sql.DB, con *ConnectionHandler) {
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", username, password, host, port, dbname)
 	for {
@@ -21,7 +21,8 @@ func ConToMySQL(drivername, username, password, dbname, host, port string, done 
 			done <- struct{}{}
 			return
 		}
-		logrus.Error("Error during connection to MysqlDB", err)
+		con.MySQLDBErr = err
+		logrus.Error("Error during connection to MysqlDB", con.MySQLDB)
 		time.Sleep(3 * time.Second)
 
 	}
