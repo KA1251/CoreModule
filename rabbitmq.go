@@ -9,7 +9,7 @@ import (
 )
 
 // NewRabbitMQ creates a new connection to RabbitMQ
-func ConnToRabbitMQ(host, port, user, password string, done chan<- struct{}, data chan<- *amqp.Connection) {
+func ConnToRabbitMQ(host, port, user, password string, done chan<- struct{}, data chan<- *amqp.Connection, con *ConnectionHandler) {
 	for {
 		amqpURI := fmt.Sprintf("amqp://%s:%s@%s:%s/", user, password, host, port)
 		conn, err := amqp.Dial(amqpURI)
@@ -19,7 +19,8 @@ func ConnToRabbitMQ(host, port, user, password string, done chan<- struct{}, dat
 			done <- struct{}{}
 			return
 		}
-		logrus.Error("Errror during connection to RabbitMQ", err)
+		con.RabbitMQErr = err
+		logrus.Error("Errror during connection to RabbitMQ", con.RabbitMQ)
 		time.Sleep(3 * time.Second)
 	}
 }
