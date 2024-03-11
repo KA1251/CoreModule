@@ -8,11 +8,12 @@ import (
 )
 
 // NewKafka creates a new connection to Kafka
-func ConToKafka(host, port, username, password string, done chan<- struct{}, dataProd chan<- sarama.SyncProducer, dataCons chan<- sarama.Consumer) {
+func ConToKafka(host, port, username, password string, done chan<- struct{}, dataProd chan<- sarama.SyncProducer, dataCons chan<- sarama.Consumer, con *ConnectionHandler) {
 
 	for {
 		// Setting up Kafka Producer
 		brokers := []string{host + ":" + port}
+
 		producerConfig := sarama.NewConfig()
 		producerConfig.Net.SASL.Enable = true
 		producerConfig.Net.SASL.User = username
@@ -36,10 +37,12 @@ func ConToKafka(host, port, username, password string, done chan<- struct{}, dat
 		}
 		if errProducer != nil || errConsumer != nil {
 			if errProducer != nil {
-				logrus.Error("Error during connection to KAFKA(producer)", errConsumer)
+				con.KafkaProducerErr = errProducer
+				logrus.Error("Error during connection to KAFKA(producer)", con.KafkaProducerErr)
 			}
 			if errConsumer != nil {
-				logrus.Error("Error during connection to KAFKA(consumer)", errProducer)
+				con.KafkaConsumerErr = errProducer
+				logrus.Error("Error during connection to KAFKA(consumer)", con.KafkaConsumerErr)
 			}
 
 		}
