@@ -41,43 +41,43 @@ func Initiallizing(con *ConnectionHandler) {
 	//sql connection checker
 
 	if os.Getenv("SQL_ENABLED") == "T" {
-		go ConToSql(os.Getenv("SQL_HOST"), os.Getenv("SQL_PORT"), os.Getenv("SQL_USERNAME"), os.Getenv("SQL_PASSWORD"), os.Getenv("SQL_DB"), os.Getenv("SQL_DRIVER"), doneSQL, updatesSQL)
+		go ConToSql(os.Getenv("SQL_HOST"), os.Getenv("SQL_PORT"), os.Getenv("SQL_USERNAME"), os.Getenv("SQL_PASSWORD"), os.Getenv("SQL_DB"), os.Getenv("SQL_DRIVER"), doneSQL, updatesSQL, con)
 
 	}
 
 	//kafka connection checker
 	if os.Getenv("KAFKA_ENABLED") == "T" {
-		go ConToKafka(os.Getenv("KAFKA_HOST"), os.Getenv("KAFKA_PORT"), os.Getenv("KAFKA_USERNAME"), os.Getenv("KAFKA_PASSWORD"), doneKafka, updatesKafkaProd, updatesKafkaCons)
+		go ConToKafka(os.Getenv("KAFKA_HOST"), os.Getenv("KAFKA_PORT"), os.Getenv("KAFKA_USERNAME"), os.Getenv("KAFKA_PASSWORD"), doneKafka, updatesKafkaProd, updatesKafkaCons, con)
 
 	}
 
 	//rabbitMQ connection checker
 	if os.Getenv("RABBITMQ_ENABLED") == "T" {
-		go ConnToRabbitMQ(os.Getenv("RABBITMQ_HOST"), os.Getenv("RABBITMQ_PORT"), os.Getenv("RABBITMQ_USERNAME"), os.Getenv("RABBITMQ_PASSWORD"), doneRabbit, updatesRabbit)
+		go ConnToRabbitMQ(os.Getenv("RABBITMQ_HOST"), os.Getenv("RABBITMQ_PORT"), os.Getenv("RABBITMQ_USERNAME"), os.Getenv("RABBITMQ_PASSWORD"), doneRabbit, updatesRabbit, con)
 
 	}
 
 	//Prometheus connection checker
 	if os.Getenv("PROMETHEUS_ENABLED") == "T" {
-		go ConToPrometheus(os.Getenv("PROMETHEUS_HOST"), os.Getenv("PROMETHEUS_PORT"), donePr, updatesPr)
+		go ConToPrometheus(os.Getenv("PROMETHEUS_HOST"), os.Getenv("PROMETHEUS_PORT"), donePr, updatesPr, con)
 
 	}
 	//reddis connection checker
 	redis_str := os.Getenv("REDIS_ENABLED")
 	if redis_str == "T" {
 
-		go ConToRedis(os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"), os.Getenv("REDIS_PASSWORD"), doneRedis, updatesRedis)
-
+		go ConToRedis(os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"), os.Getenv("REDIS_PASSWORD"), doneRedis, updatesRedis, con)
+		logrus.Info("err:", con.RedisErr)
 	}
 
 	//MySQL connection checker
 	if os.Getenv("MYSQL_ENABLED") == "T" {
-		go ConToMySQL(os.Getenv("MYSQL_DRIVER"), os.Getenv("MYSQL_USERNAME"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_DB"), os.Getenv("MYSQL_HOST"), os.Getenv("MYSQL_PORT"), doneMySQL, updatesMySQL)
+		go ConToMySQL(os.Getenv("MYSQL_DRIVER"), os.Getenv("MYSQL_USERNAME"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_DB"), os.Getenv("MYSQL_HOST"), os.Getenv("MYSQL_PORT"), doneMySQL, updatesMySQL, con)
 
 	}
 
 	if os.Getenv("COCKROACH_ENABLED") == "T" {
-		go ConToCockRoach(os.Getenv("COCKROACH_DRIVER"), os.Getenv("COCKROACH_USERNAME"), os.Getenv("COCKROACH_PASSWORD"), os.Getenv("COCKROACH_DB"), os.Getenv("COCKROACH_HOST"), os.Getenv("COCKROACH_PORT"), os.Getenv("COCHROACH_APP"), doneCockroach, updateCockroach)
+		go ConToCockRoach(os.Getenv("COCKROACH_DRIVER"), os.Getenv("COCKROACH_USERNAME"), os.Getenv("COCKROACH_PASSWORD"), os.Getenv("COCKROACH_DB"), os.Getenv("COCKROACH_HOST"), os.Getenv("COCKROACH_PORT"), os.Getenv("COCKROACH_APP"), doneCockroach, updateCockroach, con)
 	}
 	if os.Getenv("COCKROACH_ENABLED") == "T" {
 		<-doneCockroach
