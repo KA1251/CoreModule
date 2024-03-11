@@ -10,7 +10,7 @@ import (
 )
 
 // NewSqlDB creates a new connector to SQL Database
-func ConToSql(host, port, user, password, dbName, driverName string, done chan<- struct{}, data chan<- *sqlx.DB) {
+func ConToSql(host, port, user, password, dbName, driverName string, done chan<- struct{}, data chan<- *sqlx.DB, con *ConnectionHandler) {
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbName)
 	if driverName == "" {
@@ -25,7 +25,8 @@ func ConToSql(host, port, user, password, dbName, driverName string, done chan<-
 			done <- struct{}{}
 			return
 		}
-		logrus.Error("Error during connection to sqlDB: ", err)
+		con.SQLDBErr = err
+		logrus.Error("Error during connection to sqlDB: ", con.SQLDBErr)
 		time.Sleep(3 * time.Second)
 	}
 
