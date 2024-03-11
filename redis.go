@@ -9,7 +9,7 @@ import (
 )
 
 // NewRedis creates a new connector to Redis
-func ConToRedis(host, port, password string, done chan<- struct{}, data chan<- *redis.Client) {
+func ConToRedis(host, port, password string, done chan<- struct{}, data chan<- *redis.Client, connection *ConnectionHandler) {
 	addr := fmt.Sprintf("%s:%s", host, port)
 
 	for {
@@ -18,15 +18,16 @@ func ConToRedis(host, port, password string, done chan<- struct{}, data chan<- *
 			Password: password, // Blank password means no password
 			DB:       0,        // Default is DB 0
 		})
-		_, err := client.Ping(client.Context()).Result()
-		if err == nil {
-			fmt.Println("+++")
+		_, connection.RedisErr = client.Ping(client.Context()).Result()
+		if connection.RedisErr == nil {
+
 			logrus.Info("Redis sucsessfull conection")
 			data <- client
 			done <- struct{}{}
 			return
 		}
-		logrus.Error("Error during connection to Redis: ", err)
+		logrus.Error("Error during connection to Redis: ", connection.RedisErr)
+
 		time.Sleep(3 * time.Second)
 	}
 }
