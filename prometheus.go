@@ -11,7 +11,7 @@ import (
 )
 
 // NewPrometheus creates a new client to interact with the Prometheus API
-func ConToPrometheus(host, port string, done chan<- struct{}, data chan<- *v1.API) {
+func ConToPrometheus(host, port string, done chan<- struct{}, data chan<- *v1.API, con *ConnectionHandler) {
 	for {
 		address := fmt.Sprintf("http://%s:%s", host, port)
 		// Setting up an HTTP client
@@ -31,7 +31,8 @@ func ConToPrometheus(host, port string, done chan<- struct{}, data chan<- *v1.AP
 			done <- struct{}{}
 			return
 		}
-		logrus.Error("Error during connection to Prometheus", err)
+		con.Prometheus_err = err
+		logrus.Error("Error during connection to Prometheus", con.Prometheus_err)
 		time.Sleep(3 * time.Second)
 	}
 }
