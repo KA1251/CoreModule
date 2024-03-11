@@ -172,6 +172,7 @@ services:
       COCKROACH_USER: root 
     ports:
       - "26257:26257"
+      - "8080:8080"
     volumes: 
       - cockroach-data:/cockroach/cockroach-data
     command: start-single-node --insecure
