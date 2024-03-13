@@ -325,7 +325,6 @@ import (
 )
 
 func main() {
-	// Настройка конфигурации продюсера Kafka
 	var con core.ConnectionHandler
 	core.Initiallizing(&con)
 	con.CloseAllConnections()
