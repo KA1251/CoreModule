@@ -40,7 +40,7 @@ type ConnectionHandler struct {
 	// Kafka
 	KafkaIsInitialized bool
 	KafkaProducer      sarama.SyncProducer
-	KafkaConsumer      sarama.Consumer
+	KafkaConsumer      sarama.ConsumerGroup
 	KafkaConsumerErr   error
 	KafkaProducerErr   error
 
