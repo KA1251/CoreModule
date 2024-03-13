@@ -91,14 +91,11 @@ func Initiallizing(con *ConnectionHandler) {
 		con.SQLDB = db
 		con.SQLDBIsInitialized = true
 	}
-	logrus.Info("k flag", os.Getenv("KAFKA_ENABLED"))
-	logrus.Info("k host", os.Getenv("KAFKA_HOST"))
-	logrus.Info("k port", os.Getenv("KAFKA_PORT"))
+
 	if os.Getenv("KAFKA_ENABLED") == "T" {
 		<-doneKafka
 		kafkaCons := <-updatesKafkaCons
 		kafkaProd := <-updatesKafkaProd
-		//logrus.Info("+++", kafkaCons)
 		con.KafkaProducer = kafkaProd
 		con.KafkaConsumer = kafkaCons
 		con.KafkaIsInitialized = true
