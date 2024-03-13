@@ -257,3 +257,87 @@ go-app-1       | time="2024-03-08T13:35:20Z" level=info msg="COCKROACH sucsessfu
 go-app-1       | created
 go-app-1       | ID: 949729758244175873, Name: John Doe
 ```
+## example of usage 3(kafka test)
+```Dockerfile:
+FROM golang:latest
+
+WORKDIR /app
+
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
+COPY . .
+
+RUN go build -o main .
+
+CMD ["./main"]
+```
+
+docker-compose file
+```.yml
+version: '3.8'
+
+services:
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092,EXTERNAL://kafka_b:9094
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@127.0.0.1:9093
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+      - BITNAMI_DEBUG=yes
+      - KAFKA_CFG_NUM_PARTITIONS=2
+
+  go-app:
+    build: ./
+    command: ./main
+  
+    environment:
+      KAFKA_ENABLED: T
+      KAFKA_HOST: "kafka"
+      KAFKA_PORT: "9092"
+      KAFKA_USERNAME: 
+      KAFKA_PASSWORD:
+    depends_on:
+      - kafka
+
+volumes:
+  kafka-data:
+
+```
+main.go file:
+```go
+package main
+
+import (
+	"connection_test/core"
+)
+
+func main() {
+	// Настройка конфигурации продюсера Kafka
+	var con core.ConnectionHandler
+	core.Initiallizing(&con)
+	con.CloseAllConnections()
+}
+
+```
+output:
+```text
+kafka     | [2024-03-13 14:38:13,575] INFO [KafkaRaftServer nodeId=1] Kafka Server started (kafka.server.KafkaRaftServer)
+go-app-1  | time="2024-03-13T14:38:14Z" level=info msg="Kafka producer sucsessfull connection"
+go-app-1  | time="2024-03-13T14:38:14Z" level=info msg="Kafka consumer sucsessfull connection"
+go-app-1  | time="2024-03-13T14:38:14Z" level=info msg="KafkaProducer was closed"
+go-app-1  | time="2024-03-13T14:38:14Z" level=info msg="KafkaConsumer was closed"
+```
+
