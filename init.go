@@ -24,7 +24,7 @@ func Initiallizing(con *ConnectionHandler) {
 
 	doneKafka := make(chan struct{}, 1)
 	updatesKafkaProd := make(chan sarama.SyncProducer, 1)
-	updatesKafkaCons := make(chan sarama.Consumer, 1)
+	updatesKafkaCons := make(chan sarama.ConsumerGroup, 1)
 
 	doneRabbit := make(chan struct{}, 1)
 	updatesRabbit := make(chan *amqp.Connection, 1)
@@ -91,11 +91,14 @@ func Initiallizing(con *ConnectionHandler) {
 		con.SQLDB = db
 		con.SQLDBIsInitialized = true
 	}
-
+	logrus.Info("k flag", os.Getenv("KAFKA_ENABLED"))
+	logrus.Info("k host", os.Getenv("KAFKA_HOST"))
+	logrus.Info("k port", os.Getenv("KAFKA_PORT"))
 	if os.Getenv("KAFKA_ENABLED") == "T" {
 		<-doneKafka
-		kafkaProd := <-updatesKafkaProd
 		kafkaCons := <-updatesKafkaCons
+		kafkaProd := <-updatesKafkaProd
+		//logrus.Info("+++", kafkaCons)
 		con.KafkaProducer = kafkaProd
 		con.KafkaConsumer = kafkaCons
 		con.KafkaIsInitialized = true
