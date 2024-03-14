@@ -11,7 +11,7 @@ import (
 
 // NewSqlDB creates a new connector to SQL Database
 func ConToSql(host, port, user, password, dbName, driverName string, done chan<- struct{}, data chan<- *sqlx.DB, con *ConnectionHandler) {
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=enable",
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
 		host, port, user, password, dbName)
 	if driverName == "" {
 		driverName = "postgres" // Default driver
