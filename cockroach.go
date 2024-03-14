@@ -11,7 +11,7 @@ import (
 
 func ConToCockRoach(drivername, username, password, dbname, host, port, appname string, done chan<- struct{}, data chan<- *sql.DB, con *ConnectionHandler) {
 	for {
-		dsn := fmt.Sprintf("postgresql://%s@%s:%s/%s?sslmode=require&application_name=%s", username, host, port, dbname, appname)
+		dsn := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=require&application_name=%s", username, password, host, port, dbname, appname)
 		db, _ := sql.Open(drivername, dsn)
 		con.CockroachErr = db.Ping()
 		if con.CockroachErr == nil {
